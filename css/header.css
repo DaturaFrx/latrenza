@@ -1,0 +1,41 @@
+nav {
+    background-color: #E4007C;
+    color: #FFFFFF;
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+nav a.text-2xl {
+    font-weight: bold;
+}
+
+nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    background-color: #FF69B4;
+    border-radius: 0.25rem;
+}
+
+nav .relative {
+    position: relative;
+}
+
+nav .space-x-4>a {
+    margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+    nav .hidden {
+        display: none;
+    }
+}

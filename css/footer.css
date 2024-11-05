@@ -1,0 +1,42 @@
+footer {
+    background-color: #E4007C;
+    color: #FFFFFF;
+}
+
+footer h3,
+footer h4 {
+    margin-bottom: 0.5rem;
+}
+
+footer p {
+    margin-bottom: 1rem;
+}
+
+footer .flex {
+    display: flex;
+    justify-content: space-around;
+}
+
+footer a {
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+footer a:hover {
+    color: #FF9EC8;
+}
+
+footer .border-t {
+    border-top: 2px solid #FF1493;
+}
+
+footer .text-center {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    footer .grid {
+        grid-template-columns: 1fr;
+    }
+}

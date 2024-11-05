@@ -1,0 +1,213 @@
+/* Flashy Hero Section Styles */
+header.relative {
+    position: relative;
+    overflow: hidden;
+    animation: gradientBG 10s ease infinite;
+    background: linear-gradient(270deg, #E4007C, #FF69B4, #FF1493, #FF69B4);
+    background-size: 400% 400%;
+    background-blend-mode: overlay;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    25% {
+        background-position: 100% 50%;
+    }
+
+    50% {
+        background-position: 0% 50%;
+    }
+
+    75% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.hero-content {
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Floating Animation for Cards with Rotation */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.product-card:hover {
+    transform: translateY(-15px) rotateY(10deg);
+    box-shadow: 0 30px 60px rgba(228, 0, 124, 0.3);
+}
+
+/* Button Styles */
+.glow-button {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(45deg, #E4007C, #FF69B4);
+    transition: all 0.4s ease;
+    border: none;
+}
+
+.glow-button:hover {
+    background: linear-gradient(45deg, #FF69B4, #E4007C);
+}
+
+/* Product Grid Animation with Bounce */
+.grid {
+    opacity: 0;
+    animation: fadeInGrid 1s ease-out forwards;
+}
+
+@keyframes fadeInGrid {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Product Card Image Zoom Effect with Shadow */
+.product-image {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+    box-shadow: 0 10px 20px rgba(228, 0, 124, 0.3);
+}
+
+/* Price Tag Animation with Color Pulse */
+.price-tag {
+    position: relative;
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        color: #E4007C;
+    }
+
+    100% {
+        transform: scale(1.1);
+        color: #FF69B4;
+    }
+}
+
+/* Add to Cart Button Effect with Slide-in Icon */
+.cart-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.cart-button::after {
+    content: '🛒';
+    position: absolute;
+    right: -30px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.cart-button:hover::after {
+    right: 10px;
+    opacity: 1;
+}
+
+.cart-button:hover {
+    padding-right: 50px;
+    background: linear-gradient(45deg, #E4007C, #FF69B4);
+}
+
+/* Section Headers with Animated Gradient */
+.section-header {
+    background: linear-gradient(90deg, #E4007C, #FF69B4);
+    -webkit-background-clip: text;
+    color: transparent;
+    position: relative;
+    animation: textGlow 1.5s infinite alternate;
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    100% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #E4007C, #FF69B4);
+    animation: expandWidth 0.5s ease-out forwards;
+}
+
+@keyframes expandWidth {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 50px;
+    }
+}
+
+/* Scroll Reveal Animation */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Scrollbar with Gradient */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #E4007C, #FF69B4);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #FF69B4, #E4007C);
+}
