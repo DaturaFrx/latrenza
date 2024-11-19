@@ -1,0 +1,115 @@
+:root {
+    --primary-color: #E4007C;
+    --secondary-color: #FF69B4;
+    --background-color: #FFF0F5;
+    --text-color: #4A4A4A;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.categorias-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.categoria {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.categoria-titulo {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.producto {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.producto:last-child {
+    border-bottom: none;
+}
+
+.producto-imagen {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.producto-detalles {
+    flex-grow: 1;
+}
+
+.producto-nombre {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.producto-precio {
+    color: #E4007C;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.producto-stock {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.badge {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+}
+
+.producto-descripcion {
+    font-size: 0.9em;
+    color: #666;
+    margin: 5px 0;
+}
+
+.stock-bajo {
+    color: #dc3545;
+}
+
+.stock-medio {
+    color: #ffc107;
+}
+
+.stock-alto {
+    color: var(--primary-color);
+}
+
+.categoria-contador {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+}

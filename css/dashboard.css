@@ -1,0 +1,117 @@
+/* styles.css */
+
+/* Reset some default styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1,
+h2,
+h3 {
+    color: #E4007C;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+h2 {
+    margin-top: 40px;
+}
+
+h3 {
+    margin-top: 20px;
+}
+
+/* Form styles */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #E4007C;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #D5006D;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #B3005B;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #E4007C;
+    color: white;
+}
+
+tr:hover {
+    background-color: #F8BBD0;
+}
+
+/* Message styles */
+p {
+    text-align: center;
+}
+
+p[style*="color: green;"] {
+    color: #28a745;
+}
+
+p[style*="color: red;"] {
+    color: #dc3545;
+}
+
+/* Logout link */
+a {
+    display: block;
+    text-align: center;
+    margin: 20px;
+    color: #E4007C;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #D5006D;
+}

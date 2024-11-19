@@ -11,7 +11,7 @@ $categorias = getCategorias();
         <div class="text-center hero-content">
             <h1 class="text-5xl font-bold mb-4 reveal text-white">Pan Artesanal Recién Horneado</h1>
             <p class="text-xl mb-8 reveal text-white">Descubre el sabor de la tradición en cada bocado</p>
-            <a href="<?php echo SITE_URL; ?>/productos/productos.php"
+            <a href="<?php echo SITE_URL; ?>/productos/categorias.php"
                 class="glow-button bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition reveal">
                 Ver Productos
             </a>
@@ -115,7 +115,7 @@ $default_image = 'https://developers.elementor.com/docs/assets/img/elementor-pla
                                 $<?php echo number_format($producto['precio'], 2); ?>
                             </p>
 
-                            <a href="<?php echo SITE_URL; ?>/producto.php?id=<?php echo $producto['id_producto']; ?>" class="glow-button inline-block bg-pink-600 text-black px-6 py-2 rounded-full 
+                            <a href="<?php echo SITE_URL; ?>/productos/producto.php?id=<?php echo $producto['id_producto']; ?>" class="glow-button inline-block bg-pink-600 text-black px-6 py-2 rounded-full 
                                        hover:bg-pink-700 transition-colors duration-300">
                                 Ver Detalles
                             </a>

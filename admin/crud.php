@@ -2,8 +2,17 @@
 // admin/crud.php
 require_once('../configuracion.php');
 
-if (!isset($_SESSION['admin_id'])) {
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['nombre'])) {
     header('Location: ' . SITE_URL . '/admin/login.php');
+    exit;
+}
+
+// If the logged-in user is "admin", ask for password verification
+if ($_SESSION['nombre'] === 'admin' && !isset($_SESSION['admin_verified'])) {
+    header('Location: ' . SITE_URL . '/admin/verify_password.php');
     exit;
 }
 
@@ -103,22 +112,21 @@ if (isset($modules[$currentModule])) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin CRUD - <?php echo SITE_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold"><?php echo SITE_NAME; ?> - Panel Admin</h1>
             <div class="flex gap-4">
-                <select 
-                    onchange="window.location.href='?module='+this.value" 
-                    class="px-4 py-2 border rounded-lg"
-                >
+                <select onchange="window.location.href='?module='+this.value" class="px-4 py-2 border rounded-lg">
                     <?php foreach ($modules as $key => $module): ?>
                         <option value="<?php echo $key; ?>" <?php echo $currentModule === $key ? 'selected' : ''; ?>>
                             <?php echo ucfirst($key); ?>
@@ -134,7 +142,7 @@ if (isset($modules[$currentModule])) {
         <!-- Messages -->
         <?php if (isset($_SESSION['message'])): ?>
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                <?php 
+                <?php
                 echo $_SESSION['message'];
                 unset($_SESSION['message']);
                 ?>
@@ -143,7 +151,7 @@ if (isset($modules[$currentModule])) {
 
         <?php if (isset($_SESSION['error'])): ?>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <?php 
+                <?php
                 echo $_SESSION['error'];
                 unset($_SESSION['error']);
                 ?>
@@ -156,35 +164,24 @@ if (isset($modules[$currentModule])) {
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" class="grid grid-cols-1 gap-4">
                 <input type="hidden" name="action" value="create">
                 <input type="hidden" name="module" value="<?php echo $currentModule; ?>">
-                
+
                 <?php foreach ($modules[$currentModule]['fields'] as $i => $field): ?>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             <?php echo $modules[$currentModule]['labels'][$i]; ?>
                         </label>
                         <?php if ($modules[$currentModule]['types'][$i] === 'textarea'): ?>
-                            <textarea 
-                                name="<?php echo $field; ?>" 
-                                class="w-full px-3 py-2 border rounded-lg"
-                                required
-                            ></textarea>
+                            <textarea name="<?php echo $field; ?>" class="w-full px-3 py-2 border rounded-lg"
+                                required></textarea>
                         <?php elseif ($modules[$currentModule]['types'][$i] === 'select'): ?>
-                            <select 
-                                name="<?php echo $field; ?>" 
-                                class="w-full px-3 py-2 border rounded-lg"
-                                required
-                            >
+                            <select name="<?php echo $field; ?>" class="w-full px-3 py-2 border rounded-lg" required>
                                 <?php foreach ($modules[$currentModule]['options'][$field] as $option): ?>
                                     <option value="<?php echo $option; ?>"><?php echo ucfirst($option); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         <?php else: ?>
-                            <input 
-                                type="<?php echo $modules[$currentModule]['types'][$i]; ?>" 
-                                name="<?php echo $field; ?>" 
-                                class="w-full px-3 py-2 border rounded-lg"
-                                required
-                            >
+                            <input type="<?php echo $modules[$currentModule]['types'][$i]; ?>" name="<?php echo $field; ?>"
+                                class="w-full px-3 py-2 border rounded-lg" required>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -221,18 +218,13 @@ if (isset($modules[$currentModule])) {
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="module" value="<?php echo $currentModule; ?>">
                                         <input type="hidden" name="id" value="<?php echo $row["id_{$currentModule}"]; ?>">
-                                        <button 
-                                            type="submit" 
-                                            class="bg-red-500 text-white px-3 py-1 rounded"
-                                            onclick="return confirm('¿Estás seguro de eliminar este registro?')"
-                                        >
+                                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded"
+                                            onclick="return confirm('¿Estás seguro de eliminar este registro?')">
                                             Eliminar
                                         </button>
                                     </form>
-                                    <button 
-                                        onclick="editRecord(<?php echo htmlspecialchars(json_encode($row)); ?>)"
-                                        class="bg-yellow-500 text-white px-3 py-1 rounded ml-2"
-                                    >
+                                    <button onclick="editRecord(<?php echo htmlspecialchars(json_encode($row)); ?>)"
+                                        class="bg-yellow-500 text-white px-3 py-1 rounded ml-2">
                                         Editar
                                     </button>
                                 </td>
@@ -259,37 +251,25 @@ if (isset($modules[$currentModule])) {
                             <?php echo $modules[$currentModule]['labels'][$i]; ?>
                         </label>
                         <?php if ($modules[$currentModule]['types'][$i] === 'textarea'): ?>
-                            <textarea 
-                                name="<?php echo $field; ?>" 
-                                id="edit_<?php echo $field; ?>"
-                                class="w-full px-3 py-2 border rounded-lg"
-                                required
-                            ></textarea>
+                            <textarea name="<?php echo $field; ?>" id="edit_<?php echo $field; ?>"
+                                class="w-full px-3 py-2 border rounded-lg" required></textarea>
                         <?php elseif ($modules[$currentModule]['types'][$i] === 'select'): ?>
-                            <select 
-                                name="<?php echo $field; ?>" 
-                                id="edit_<?php echo $field; ?>"
-                                class="w-full px-3 py-2 border rounded-lg"
-                                required
-                            >
+                            <select name="<?php echo $field; ?>" id="edit_<?php echo $field; ?>"
+                                class="w-full px-3 py-2 border rounded-lg" required>
                                 <?php foreach ($modules[$currentModule]['options'][$field] as $option): ?>
                                     <option value="<?php echo $option; ?>"><?php echo ucfirst($option); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         <?php else: ?>
-                            <input 
-                                type="<?php echo $modules[$currentModule]['types'][$i]; ?>" 
-                                name="<?php echo $field; ?>" 
-                                id="edit_<?php echo $field; ?>"
-                                class="w-full px-3 py-2 border rounded-lg"
-                                required
-                            >
+                            <input type="<?php echo $modules[$currentModule]['types'][$i]; ?>" name="<?php echo $field; ?>"
+                                id="edit_<?php echo $field; ?>" class="w-full px-3 py-2 border rounded-lg" required>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
 
                 <div class="flex justify-end gap-4">
-                    <button type="button" onclick="closeEditModal()" class="bg-gray-500 text-white px-4 py-2 rounded-lg">
+                    <button type="button" onclick="closeEditModal()"
+                        class="bg-gray-500 text-white px-4 py-2 rounded-lg">
                         Cancelar
                     </button>
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
@@ -301,24 +281,25 @@ if (isset($modules[$currentModule])) {
     </div>
 
     <script>
-    function editRecord(record) {
-        document.getElementById('editId').value = record[`id_${currentModule}`];
-        <?php foreach ($modules[$currentModule]['fields'] as $field): ?>
-            document.getElementById('edit_<?php echo $field; ?>').value = record['<?php echo $field; ?>'];
-        <?php endforeach; ?>
-        document.getElementById('editModal').classList.remove('hidden');
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModal').classList.add('hidden');
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('editModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeEditModal();
+        function editRecord(record) {
+            document.getElementById('editId').value = record[`id_${currentModule}`];
+            <?php foreach ($modules[$currentModule]['fields'] as $field): ?>
+                document.getElementById('edit_<?php echo $field; ?>').value = record['<?php echo $field; ?>'];
+            <?php endforeach; ?>
+            document.getElementById('editModal').classList.remove('hidden');
         }
-    });
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('editModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
     </script>
 </body>
+
 </html>

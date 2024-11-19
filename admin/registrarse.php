@@ -33,11 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Si no hay errores, proceder con el registro
     if (empty($errores)) {
         try {
+            // Hashing de la contraseña usando password_hash() con bcrypt
+            $password_hash = password_hash($_POST['contrasena'], PASSWORD_DEFAULT); // bcrypt es el predeterminado
+
             $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo_electronico, contrasena, telefono, direccion) 
                                  VALUES (:nombre, :correo_electronico, :contrasena, :telefono, :direccion)");
-            
-            $password_hash = password_hash($_POST['contrasena'], PASSWORD_DEFAULT);
-            
+
             $stmt->execute([
                 ':nombre' => $_POST['nombre'],
                 ':correo_electronico' => $_POST['correo_electronico'],
@@ -45,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':telefono' => $_POST['telefono'] ?? null,
                 ':direccion' => $_POST['direccion'] ?? null
             ]);
-            
+
             $exito = true;
             // Redirigir al login después del registro exitoso
             header("Location: " . SITE_URL . "/admin/login.php?registro=exitoso");
@@ -85,7 +86,8 @@ include(__DIR__ . '/../header.php');
             </div>
 
             <div>
-                <label for="correo_electronico" class="block text-sm font-medium text-gray-700">Correo Electrónico *</label>
+                <label for="correo_electronico" class="block text-sm font-medium text-gray-700">Correo Electrónico
+                    *</label>
                 <input type="email" name="correo_electronico" id="correo_electronico" required
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
                     value="<?php echo isset($_POST['correo_electronico']) ? htmlspecialchars($_POST['correo_electronico']) : ''; ?>">
@@ -120,7 +122,7 @@ include(__DIR__ . '/../header.php');
         </form>
 
         <p class="mt-4 text-center text-sm text-gray-600">
-            ¿Ya tienes una cuenta? 
+            ¿Ya tienes una cuenta?
             <a href="<?php echo SITE_URL; ?>/admin/login.php" class="font-medium text-amber-800 hover:text-amber-700">
                 Inicia sesión aquí
             </a>

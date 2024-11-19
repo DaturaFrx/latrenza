@@ -9,6 +9,7 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Crear conexión PDO
         $pdo = new PDO(
             "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8",
             DB_USER,
@@ -16,41 +17,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
         );
 
+        // Sanitizar entradas
         $correo = filter_var($_POST['correo_electronico'], FILTER_SANITIZE_EMAIL);
         $contrasena = $_POST['contrasena'];
         $recordar = isset($_POST['recordar']) ? true : false;
 
+        // Validar entradas
         if (empty($correo) || empty($contrasena)) {
             throw new Exception('Por favor, complete todos los campos.');
         }
 
-        // Retrieve the user data from the database
-        $stmt = $pdo->prepare("SELECT id_usuario, nombre, correo_electronico, contrasena, telefono, direccion FROM usuarios WHERE correo_electronico = ? LIMIT 1");
+        // Consultar empleado en la base de datos
+        $stmt = $pdo->prepare("SELECT id_empleado, nombre, correo_electronico, puesto, contrasena 
+                               FROM empleados WHERE correo_electronico = ? LIMIT 1");
         $stmt->execute([$correo]);
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        $empleado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Check if the user exists and verify the password
-        if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
-            // Password is correct, set session
-            $_SESSION['usuario'] = array(
-                'id' => $usuario['id_usuario'],
-                'nombre' => $usuario['nombre'],
-                'email' => $usuario['correo_electronico'],
-                'telefono' => $usuario['telefono'],
-                'direccion' => $usuario['direccion']
-            );
+        if ($empleado) {
+            // Verificar contraseña
+            if (password_verify($contrasena, $empleado['contrasena'])) {
+                // Iniciar sesión
+                $_SESSION['empleado'] = array(
+                    'id_empleado' => $empleado['id_empleado'],
+                    'nombre' => $empleado['nombre'],
+                    'correo_electronico' => $empleado['correo_electronico'],
+                    'puesto' => $empleado['puesto']
+                );
 
-            // If "remember me" is checked, create a persistent session
-            if ($recordar) {
-                crearSesionPersistente($usuario['id_usuario']);
+                // Crear sesión persistente si es necesario
+                if ($recordar) {
+                    crearSesionPersistente($empleado['id_empleado']);
+                }
+
+                // Redirigir al dashboard
+                header('Location: ' . SITE_URL . '/empleado/dashboard.php');
+                exit;
+            } else {
+                throw new Exception('La contraseña es incorrecta.');
             }
-
-            error_log("Inicio de sesión exitoso: {$usuario['correo_electronico']} en " . date('Y-m-d H:i:s'));
-            header('Location: ' . SITE_URL);
-            exit;
         } else {
-            throw new Exception('Credenciales incorrectas.');
+            throw new Exception('No se encontró un empleado con ese correo.');
         }
+
     } catch (Exception $e) {
         $error = $e->getMessage();
         error_log("Error de inicio de sesión: " . $e->getMessage());
@@ -64,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - <?php echo SITE_NAME; ?></title>
+    <title>Iniciar Sesión como Empleado - <?php echo SITE_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -75,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php echo SITE_NAME; ?>
             </h2>
             <p class="mt-2 text-sm text-gray-600">
-                Iniciar Sesión
+                Iniciar Sesión como Empleado
             </p>
         </div>
 
@@ -86,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form class="space-y-6" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+            <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>
                     <label for="correo_electronico" class="block text-sm font-medium text-gray-700">
                         Correo Electrónico

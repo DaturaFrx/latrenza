@@ -22,16 +22,17 @@ if (!defined('SITE_URL')) {
         <div class="container mx-auto flex justify-between items-center">
             <a href="<?php echo SITE_URL; ?>" class="text-2xl font-bold"><?php echo SITE_NAME; ?></a>
             <div class="hidden md:flex space-x-6">
-                <a href="<?php echo SITE_URL; ?>/productos.php">Productos</a>
+                <a href="<?php echo SITE_URL; ?>/productos/categorias.php">Productos</a>
                 <a href="<?php echo SITE_URL; ?>/reservas.php">Reservas</a>
-                <a href="<?php echo SITE_URL; ?>/eventos.php">Eventos</a>
-                <a href="<?php echo SITE_URL; ?>/blog.php">Blog</a>
+                <a href="<?php echo SITE_URL; ?>/eventos/eventos.php">Eventos</a>
+                <a href="<?php echo SITE_URL; ?>/blog/blog.php">Noticias y Opiniones</a>
                 <a href="<?php echo SITE_URL; ?>/contacto.php">Contacto</a>
             </div>
             <div class="flex items-center space-x-4">
                 <?php if (isLoggedIn()): ?>
+                    <!-- Profile menu -->
                     <div class="relative">
-                        <img src="<?php echo SITE_URL; ?>/images/dummy-profile-pic.png" alt="Profile Picture"
+                        <img src="<?php echo SITE_URL; ?>/files/cot.jpg" alt="Profile Picture"
                             class="w-8 h-8 rounded-full cursor-pointer" id="profile-pic">
                         <div class="absolute right-0 hidden bg-white text-black rounded shadow-lg z-10" id="profile-menu">
                             <div class="p-2">
@@ -43,26 +44,40 @@ if (!defined('SITE_URL')) {
                             </div>
                         </div>
                     </div>
+
+                    <!-- Carrito siempre visible si hay sesión -->
+                    <a href="<?php echo SITE_URL; ?>/carrito/carrito.php" class="relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <?php if (getCarritoCount() > 0): ?>
+                            <span
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                <?php echo getCarritoCount(); ?>
+                            </span>
+                        <?php endif; ?>
+                    </a>
+                <?php elseif (isset($_COOKIE['login_cookie'])): ?>
+                    <!-- Carrito visible si hay cookie de sesión -->
+                    <a href="<?php echo SITE_URL; ?>/carrito/carrito.php" class="relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <?php if (getCarritoCount() > 0): ?>
+                            <span
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                <?php echo getCarritoCount(); ?>
+                            </span>
+                        <?php endif; ?>
+                    </a>
+                    <a href="<?php echo SITE_URL; ?>/admin/login.php">Iniciar Sesión</a>
                 <?php else: ?>
                     <a href="<?php echo SITE_URL; ?>/admin/login.php">Iniciar Sesión</a>
                     <a href="<?php echo SITE_URL; ?>/admin/registrarse.php">Crear Cuenta</a>
                 <?php endif; ?>
-                <a href="<?php echo SITE_URL; ?>/carrito.php" class="relative">
-                    <i class="fas fa-shopping-cart"></i>
-                    <?php if (getCarritoCount() > 0): ?>
-                        <span
-                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                            <?php echo getCarritoCount(); ?>
-                        </span>
-                    <?php endif; ?>
-                </a>
             </div>
         </div>
     </nav>
 
     <script>
         // Toggle profile menu on profile picture click
-        document.getElementById('profile-pic').addEventListener('click', function () {
+        document.getElementById('profile-pic')?.addEventListener('click', function () {
             const profileMenu = document.getElementById('profile-menu');
             profileMenu.classList.toggle('hidden');
         });
@@ -70,7 +85,8 @@ if (!defined('SITE_URL')) {
         // Close the profile menu if clicked outside
         window.addEventListener('click', function (event) {
             const profileMenu = document.getElementById('profile-menu');
-            if (!event.target.closest('#profile-pic') && !event.target.closest('#profile-menu')) {
+            const profilePic = document.getElementById('profile-pic');
+            if (profileMenu && !event.target.closest('#profile-pic') && !event.target.closest('#profile-menu')) {
                 profileMenu.classList.add('hidden');
             }
         });

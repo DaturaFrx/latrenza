@@ -1,0 +1,118 @@
+        /* Estilos del cuerpo y estructura */
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        header,
+        footer {
+            width: 100%;
+            padding: 20px;
+            background-color: #1f1f1f;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        footer {
+            position: relative;
+            bottom: 0;
+            margin-top: auto;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            margin: 0 auto;
+            flex-grow: 1;
+        }
+
+        .product {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .product button {
+            background-color: #E4007C;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .product button:hover {
+            background-color: #c7006b;
+        }
+
+        .btn-success {
+            background-color: #4CAF50;
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+        }
+
+        .btn-danger:hover {
+            background-color: #e53935;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #E4007C;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #c7006b;
+        }
+
+        /* Fixing text fields */
+        input[type="text"],
+        textarea {
+            background-color: #333;
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }

@@ -1,4 +1,5 @@
 <?php
+include('configuracion.php');
 class Conexion
 {
     private static $instance = null;
