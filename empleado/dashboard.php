@@ -226,9 +226,9 @@
                     <?php echo htmlspecialchars($empleado['puesto'] === 'admin' ? 'Admin' : 'Trabajador'); ?>,
                     "<?php echo htmlspecialchars($empleado['nombre']); ?>"
                 </h1>
-                <div class="flex items-center"> <!-- Add this wrapper div -->
+                <div class="flex items-center">
                     <div class="relative dropdown">
-                        <button class="btn-primary px-4 py-2 rounded-lg flex items-center space-x-2">
+                        <button class="btn-primary px-4 py-2 rounded-lg flex items-center space-x-2" onclick="toggleDropdown(event)">
                             <span><?php echo ucfirst($moduleToShow); ?></span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -372,6 +372,20 @@
             // Scroll to form
             form.scrollIntoView({ behavior: 'smooth' });
         }
+
+        function toggleDropdown(event) {
+            event.stopPropagation(); // Prevent the click event from bubbling up
+            const dropdownMenu = event.currentTarget.nextElementSibling; // Get the dropdown menu
+            dropdownMenu.classList.toggle('hidden'); // Toggle the visibility
+        }
+
+        // Close the dropdown if clicked outside
+        document.addEventListener('click', function() {
+            const dropdowns = document.querySelectorAll('.dropdown-menu');
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.add('hidden'); // Hide all dropdowns
+            });
+        });
     </script>
 </body>
 

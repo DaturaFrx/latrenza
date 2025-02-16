@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2024 at 11:23 AM
+-- Generation Time: Dec 05, 2024 at 06:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -102,6 +102,13 @@ CREATE TABLE `carrito` (
   `cantidad` int(11) DEFAULT 1,
   `fecha_agregado` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `carrito`
+--
+
+INSERT INTO `carrito` (`id_carrito`, `id_usuario`, `id_producto`, `cantidad`, `fecha_agregado`) VALUES
+(24, 29, 1, 1, '2024-12-03 10:42:48');
 
 -- --------------------------------------------------------
 
@@ -518,6 +525,18 @@ INSERT INTO `productos` (`id_producto`, `nombre_producto`, `descripcion`, `preci
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `programa_actual`
+--
+
+CREATE TABLE `programa_actual` (
+  `id_usuario` int(11) DEFAULT NULL,
+  `id_programa` int(11) DEFAULT NULL,
+  `fecha_asignacion` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `programa_lealtad`
 --
 
@@ -558,6 +577,24 @@ INSERT INTO `programa_lealtad` (`id_programa`, `nombre_programa`, `descripcion`,
 (19, 'Programa de Clientes VIP', 'Beneficios exclusivos para nuestros mejores clientes.', 300, 'Acceso a productos limitados y eventos VIP.', '2024-01-01', '2024-12-31', 'activo'),
 (20, 'Programa de Compromiso Social', 'Premiamos a quienes apoyan causas sociales.', 150, 'Descuentos en productos al participar en actividades comunitarias.', '2024-11-01', '2024-12-31', 'activo'),
 (21, 'Programa de Lealtad por Suscripción', 'Beneficios por suscribirte a nuestras ofertas.', 100, 'Puntos adicionales por cada suscripción mensual.', '2024-12-01', '2024-12-31', 'activo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `puntos_acumulados`
+--
+
+CREATE TABLE `puntos_acumulados` (
+  `id_usuario` int(11) DEFAULT NULL,
+  `puntos` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `puntos_acumulados`
+--
+
+INSERT INTO `puntos_acumulados` (`id_usuario`, `puntos`) VALUES
+(29, 50);
 
 -- --------------------------------------------------------
 
@@ -701,8 +738,8 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `foto_perfil`, `correo_electroni
 (18, 'Carolina Mendoza', '', 'carolina.mendoza@example.com', 'hashed_password18', '4455667788', 'Calle Azul 42, Ciudad R'),
 (19, 'Fernando Vargas', '', 'fernando.vargas@example.com', 'hashed_password19', '5566778899', 'Av. Libertad 8, Ciudad S'),
 (20, 'Isabel Ortiz', '', 'isabel.ortiz@example.com', 'hashed_password20', '6677889900', 'Calle Esperanza 13, Ciudad T'),
-(25, 'prueba', '', 'prueba@gmail.com', '$2y$10$/wJFoCUvHuodus5tJgnu8e1byB6Qgd3UpVeSrPJ13BywnGno1VFEa', '', ''),
-(26, 'admin', '', 'riveraerick966@gmail.com', '$2y$10$ce9pwwhSJ1h.MDUuAxR0/OiwX26kNPwnoC3PCjiYlEG5K3t0NRK36', '', '');
+(28, 'Erick', 0x494d475f303038322e4a5047, 'correo@gmail.com', '$2y$10$UDNAvVKsweop5OpOPqpvXuR0iz2lVyr8R8HB4GdCm680W.ePPchN.', '', ''),
+(29, 'Pongame 10, Profe', 0x32303735783331333078322e6a7067, 'prueba@gmail.com', '$2y$10$6AFkWTa2GH6o0QSsQpkX2.KJOQYSEgrBLqIX5lxoaO9o3TMXT6SAC', '', '');
 
 --
 -- Indexes for dumped tables
@@ -806,10 +843,23 @@ ALTER TABLE `productos`
   ADD KEY `categoria` (`categoria`);
 
 --
+-- Indexes for table `programa_actual`
+--
+ALTER TABLE `programa_actual`
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_programa` (`id_programa`);
+
+--
 -- Indexes for table `programa_lealtad`
 --
 ALTER TABLE `programa_lealtad`
   ADD PRIMARY KEY (`id_programa`);
+
+--
+-- Indexes for table `puntos_acumulados`
+--
+ALTER TABLE `puntos_acumulados`
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indexes for table `reservas`
@@ -861,7 +911,7 @@ ALTER TABLE `boletines`
 -- AUTO_INCREMENT for table `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `categorias`
@@ -957,7 +1007,7 @@ ALTER TABLE `soporte`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Constraints for dumped tables
@@ -1014,6 +1064,19 @@ ALTER TABLE `pedidos`
 --
 ALTER TABLE `productos`
   ADD CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`categoria`) REFERENCES `categorias` (`id_categoria`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `programa_actual`
+--
+ALTER TABLE `programa_actual`
+  ADD CONSTRAINT `programa_actual_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
+  ADD CONSTRAINT `programa_actual_ibfk_2` FOREIGN KEY (`id_programa`) REFERENCES `programa_lealtad` (`id_programa`);
+
+--
+-- Constraints for table `puntos_acumulados`
+--
+ALTER TABLE `puntos_acumulados`
+  ADD CONSTRAINT `puntos_acumulados_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
 
 --
 -- Constraints for table `reservas`
