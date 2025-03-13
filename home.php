@@ -173,11 +173,6 @@ $default_image = 'https://developers.elementor.com/docs/assets/img/elementor-pla
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <?php foreach ($productosDestacados as $producto): ?>
                 <div class="product-card bg-white rounded-lg shadow-md overflow-hidden reveal">
-                    <div class="h-48 overflow-hidden">
-                        <img src="<?php echo SITE_URL . '/files/' . $producto['imagen']; ?>"
-                            alt="<?php echo $producto['nombre_producto']; ?>"
-                            class="w-full h-full object-cover product-image">
-                    </div>
                     <div class="p-4">
                         <h3 class="font-bold text-xl mb-2 text-black"><?php echo $producto['nombre_producto']; ?></h3>
                         <p class="text-black mb-4"><?php echo $producto['descripcion']; ?></p>
