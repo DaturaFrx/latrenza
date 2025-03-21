@@ -78,13 +78,57 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $conexion = Conexion::getInstance()->getConnection();
+
+        // Primero, calcular el total de los productos en el carrito
+        $query_total = "
+            SELECT p.precio, c.cantidad
+            FROM productos p
+            INNER JOIN carrito c ON p.id_producto = c.id_producto
+            WHERE c.id_usuario = :id_usuario
+        ";
+        $stmt_total = $conexion->prepare($query_total);
+        $stmt_total->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt_total->execute();
+        $productos_total = $stmt_total->fetchAll();
+        $total = 0;
+        foreach ($productos_total as $producto) {
+            $precio_mxn = $producto['precio'] * EXCHANGE_RATE;
+            $subtotal = $precio_mxn * $producto['cantidad'];
+            $total += $subtotal;
+        }
+        // Aplicar descuento
+        $descuento = $total * ($porcentaje_descuento / 100);
+        $total_con_descuento = $total - $descuento;
+
+        // Procesar la personalización
+        $personalizacion = isset($_POST['personalizacion']) ? $_POST['personalizacion'] : null;
+        $aceptar_personalizacion = isset($_POST['aceptar_personalizacion']) && $_POST['aceptar_personalizacion'] === 'on';
+        $cargo_personalizacion = $aceptar_personalizacion ? 50 : 0;
+
+        // Sumar el cargo de personalización al total
+        $total_con_descuento += $cargo_personalizacion;
+
         $conexion->beginTransaction();
 
+        // Insertar la personalización en la tabla 'personalizaciones' si se indicó
+        if ($personalizacion) {
+            $query_insert_personalizacion = "
+                INSERT INTO personalizaciones (id_usuario, personalizacion)
+                VALUES (:id_usuario, :personalizacion)
+            ";
+            $stmt_personalizacion = $conexion->prepare($query_insert_personalizacion);
+            $stmt_personalizacion->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt_personalizacion->bindParam(':personalizacion', $personalizacion, PDO::PARAM_STR);
+            $stmt_personalizacion->execute();
+        }
+
+        // Eliminar productos del carrito
         $query = "DELETE FROM carrito WHERE id_usuario = :id_usuario";
         $stmt = $conexion->prepare($query);
         $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
         $stmt->execute();
 
+        // Actualizar puntos acumulados
         $query_update = "UPDATE Puntos_Acumulados SET puntos = puntos + 25 WHERE id_usuario = :id_usuario";
         $stmt_update = $conexion->prepare($query_update);
         $stmt_update->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
@@ -97,29 +141,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_insert->execute();
         }
 
+        // Insertar o actualizar el programa de lealtad
         if ($id_programa_descuento) {
             $query_programa_actual = "
-                INSERT INTO Programa_Actual (id_usuario, id_programa) 
+                INSERT INTO Programa_Actual (id_usuario, id_programa)
                 VALUES (:id_usuario, :id_programa)
-                ON DUPLICATE KEY UPDATE id_programa = :id_programa
+                ON DUPLICATE KEY UPDATE id_programa = :id_programa_update
             ";
             $stmt_programa_actual = $conexion->prepare($query_programa_actual);
             $stmt_programa_actual->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
             $stmt_programa_actual->bindParam(':id_programa', $id_programa_descuento, PDO::PARAM_INT);
+            $stmt_programa_actual->bindParam(':id_programa_update', $id_programa_descuento, PDO::PARAM_INT);
             $stmt_programa_actual->execute();
         }
 
         $conexion->commit();
 
-        echo "<p style='color: green; margin-bottom: 1rem;'>¡Gracias por realizar tu compra en La Trenza! Redirigiéndote a la página de inicio.</p>";
+        echo "<p style='color: green; margin-bottom: 1rem;'>";
+        echo "¡Gracias por realizar tu compra en La Trenza!<br>";
+        echo "Total a pagar: " . number_format($total_con_descuento, 2) . " MXN.";
+        echo "</p>";
         echo "<script>setTimeout(function () { window.location.href = '" . SITE_URL . "'; }, 3000);</script>";
         exit();
-
     } catch (Exception $e) {
         $conexion->rollBack();
-        echo "<p style='color: red; margin-bottom: 1rem;'>Error al procesar la eliminación: " . $e->getMessage() . "</p>";
+        echo "<p style='color: red; margin-bottom: 1rem;'>Error al procesar la compra: " . $e->getMessage() . "</p>";
     }
 }
+
 
 try {
     $conexion = Conexion::getInstance()->getConnection();
@@ -243,8 +292,8 @@ try {
                                 <td><?php echo number_format($producto['precio'] * EXCHANGE_RATE, 2); ?> MXN</td>
                                 <td><?php echo $producto['cantidad']; ?></td>
                                 <td><?php
-                                $subtotal = $producto['precio'] * EXCHANGE_RATE * $producto['cantidad'];
-                                echo number_format($subtotal, 2); ?> MXN
+                                    $subtotal = $producto['precio'] * EXCHANGE_RATE * $producto['cantidad'];
+                                    echo number_format($subtotal, 2); ?> MXN
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -256,6 +305,31 @@ try {
                         -<?php echo number_format($descuento, 2); ?> MXN</p>
                 <?php endif; ?>
                 <p><strong>Total a pagar: <?php echo number_format($total_con_descuento, 2); ?> MXN</strong></p>
+
+                <!-- Botón para abrir el modal de personalización -->
+                <button id="openModal" class="btn">Personalizar productos (agrega 50 MXN)</button>
+
+                <!-- Ventana modal para la personalización -->
+                <div id="customizationModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close-btn" style="cursor:pointer;">&times;</span>
+                        <h2>Personalización Opcional</h2>
+                        <p>Si aceptas esta personalización se te cobrará un cargo adicional de 50 MXN.</p>
+                        <form method="POST" action="">
+                            <!-- Otros campos y resumen de la compra -->
+                            <label for="personalizacion">Personalización (opcional):</label>
+                            <textarea id="personalizacion" name="personalizacion" placeholder="Ingresa tu personalización..."></textarea>
+                            <br>
+                            <label>
+                                <input type="checkbox" name="aceptar_personalizacion"> Acepto la personalización (se agregan 50 MXN)
+                            </label>
+                            <br>
+                            <button type="submit" name="comprar" class="btn">Confirmar compra</button>
+                        </form>
+
+                    </div>
+                </div>
+
                 <form method="POST" action="">
                     <button type="submit" name="comprar" class="btn">Confirmar compra</button>
                     <a href="carrito.php" class="btn btn-secondary">Ir al carrito</a>
@@ -265,7 +339,40 @@ try {
             <?php endif; ?>
         </div>
     </div>
+
+    <script>
+        // Obtener elementos del DOM
+        const modal = document.getElementById('customizationModal');
+        const openModal = document.getElementById('openModal');
+        const closeModal = document.querySelector('.close-btn');
+
+        // Abrir el modal al hacer clic en el botón
+        openModal.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Cerrar el modal al hacer clic en la "x"
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Cerrar el modal si el usuario hace clic fuera del contenido
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Si el usuario confirma la personalización, agrega el cargo adicional
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_personalizacion'])) {
+            if (isset($_POST['aceptar_personalizacion']) && $_POST['aceptar_personalizacion'] == 'on') {
+                // Añadir cargo de personalización
+                $total_con_descuento += 50; // Aumenta 50 MXN al total
+            }
+        }
+    </script>
 </body>
+
 
 </html>
 
