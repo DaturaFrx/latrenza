@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 06, 2024 at 05:40 AM
+-- Generation Time: Apr 02, 2025 at 05:46 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,33 @@ SET time_zone = "+00:00";
 --
 -- Database: `latrenza`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blog`
+--
+
+CREATE TABLE `blog` (
+  `id` int(11) NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `contenido` text NOT NULL,
+  `imagen` mediumblob NOT NULL,
+  `url-img` varchar(255) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `blog`
+--
+
+INSERT INTO `blog` (`id`, `titulo`, `contenido`, `imagen`, `url-img`, `creado_en`) VALUES
+(1, 'Entrada de Blog 1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', '', 'https://pbs.twimg.com/media/E3j9mNNX0AQIaQj.jpg', '2024-11-19 00:50:52'),
+(2, 'Entrada de Blog 2', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '', '', '2024-11-19 00:50:52'),
+(3, 'prueba', 'gagaga gato coooool', '', 'https://i.redd.it/3ajy6xo5hrib1.png', '2024-11-19 01:39:00'),
+(4, 'Titulo 4', 'Contenido del cuarto artículo.', '', 'https://www.w3schools.com/howto/img_parallax.jpg', '2024-11-15 08:00:00'),
+(5, 'Titulo 5', 'Contenido del quinto artículo.', '', 'https://www.w3schools.com/w3images/snow.jpg', '2024-11-14 08:00:00'),
+(6, 'Titulo 6', 'Contenido del sexto artículo.', '', 'https://www.w3schools.com/w3images/mountains.jpg', '2024-11-13 08:00:00');
 
 -- --------------------------------------------------------
 
@@ -73,8 +100,16 @@ CREATE TABLE `carrito` (
   `id_usuario` int(11) NOT NULL,
   `id_producto` int(11) NOT NULL,
   `cantidad` int(11) DEFAULT 1,
-  `fecha_agregado` datetime DEFAULT current_timestamp()
+  `fecha_agregado` datetime DEFAULT current_timestamp(),
+  `personalizacion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `carrito`
+--
+
+INSERT INTO `carrito` (`id_carrito`, `id_usuario`, `id_producto`, `cantidad`, `fecha_agregado`, `personalizacion`) VALUES
+(24, 29, 1, 1, '2024-12-03 10:42:48', NULL);
 
 -- --------------------------------------------------------
 
@@ -93,10 +128,10 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`id_categoria`, `nombre_categoria`, `descripcion`) VALUES
-(1, 'Pan', 'Todos los tipos de pan.'),
-(2, 'Integral', 'Productos integrales.'),
-(3, 'Dulces', 'Productos de panadería dulce.'),
-(4, 'Tortas', 'Tortas y postres.'),
+(1, 'Pan', 'Variedad de panes, incluyendo pan blanco, integral, de masa madre y sin gluten.'),
+(2, 'Integral', 'Productos elaborados con ingredientes integrales, como panes y galletas saludables.'),
+(3, 'Dulces', 'Productos de panadería dulce, bollos y pasteles.'),
+(4, 'Tartas', 'Tartas y postres.'),
 (5, 'Galletas', 'Variedad de galletas.');
 
 -- --------------------------------------------------------
@@ -225,6 +260,30 @@ INSERT INTO `detalle_pedidos` (`id_detalle`, `id_pedido`, `id_producto`, `cantid
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `empleados`
+--
+
+CREATE TABLE `empleados` (
+  `id_empleado` int(11) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `correo_electronico` varchar(255) NOT NULL,
+  `puesto` enum('admin','trabajador') NOT NULL,
+  `fecha_contratacion` date NOT NULL,
+  `salario` decimal(10,2) NOT NULL,
+  `contrasena` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `empleados`
+--
+
+INSERT INTO `empleados` (`id_empleado`, `nombre`, `correo_electronico`, `puesto`, `fecha_contratacion`, `salario`, `contrasena`) VALUES
+(12, 'Admin', 'rivera@gmail.com', 'admin', '2024-11-18', 5000.00, '$2y$10$KYNCyEVC9oN91c6znOT.GetXbbwNt8W/6sWJFEZLx22xD7WneEaB2'),
+(25, 'prueba', 'prueba@gmail.com', 'admin', '2024-11-18', 100000.00, '$2y$10$LDlHZszbUNlHuaI0cnv8Dexq08jA7XAxKIw32foWX4QYHatGea2Pm');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `eventos`
 --
 
@@ -322,7 +381,7 @@ CREATE TABLE `fotos` (
 --
 
 INSERT INTO `fotos` (`id_foto`, `id_producto`, `url_foto`) VALUES
-(2, 1, 'https://www.elpavobakery.com/wp-content/uploads/2019/09/Rebanada-de-Mantequilla.jpg'),
+(2, 1, 'https://www.debate.com.mx/__export/1697647053120/sites/debate/img/2023/10/18/pan_blanco_y_salud.jpg_1902800913.jpg'),
 (3, 2, 'https://static01.nyt.com/images/2023/07/21/multimedia/21baguettesrex-hbkc/21baguettesrex-hbkc-superJumbo.jpg'),
 (4, 3, 'https://assets.tmecosys.com/image/upload/t_web767x639/img/recipe/ras/Assets/D5666EAA-F144-4205-B5D2-AE84080AA898/Derivates/18FA3AC2-CE9E-4F97-8D75-F3B67D43C599.jpg'),
 (5, 4, 'https://www.jonathanmelendez.com/wp-content/uploads/2023/05/0S9A7599.jpg'),
@@ -340,46 +399,6 @@ INSERT INTO `fotos` (`id_foto`, `id_producto`, `url_foto`) VALUES
 (18, 16, 'https://t1.uc.ltmcdn.com/es/posts/4/1/0/como_hacer_pie_de_manzana_31014_orig.jpg'),
 (19, 17, 'https://7diasdesabor.com/wp-content/uploads/2021/09/10794d0b83681d545c8a22682726fb3f8e2.jpg'),
 (20, 18, 'https://www.daisybrand.com/wp-content/uploads/2019/12/double-chocolate-zucchini-bread-770x628_4689.jpg');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `imagenes_galeria`
---
-
-CREATE TABLE `imagenes_galeria` (
-  `id_imagen` int(11) NOT NULL,
-  `descripcion` varchar(255) DEFAULT NULL,
-  `ruta_imagen` varchar(255) NOT NULL,
-  `fecha_subida` date NOT NULL,
-  `estado` enum('visible','oculta') DEFAULT 'visible'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `imagenes_galeria`
---
-
-INSERT INTO `imagenes_galeria` (`id_imagen`, `descripcion`, `ruta_imagen`, `fecha_subida`, `estado`) VALUES
-(1, 'Pan de caja recién horneado', 'ruta/a/imagen1.jpg', '2024-01-01', 'visible'),
-(2, 'Pastel de chocolate decorado', 'ruta/a/imagen2.jpg', '2024-01-02', 'visible'),
-(3, 'Galletas de avena', 'ruta/a/imagen3.jpg', '2024-01-03', 'visible'),
-(4, 'Tarta de frutas de temporada', 'ruta/a/imagen4.jpg', '2024-01-04', 'visible'),
-(5, 'Pan de muerto', 'ruta/a/imagen5.jpg', '2024-01-05', 'visible'),
-(6, 'Bollería variada', 'ruta/a/imagen6.jpg', '2024-01-06', 'visible'),
-(7, 'Panes artesanales', 'ruta/a/imagen7.jpg', '2024-01-07', 'visible'),
-(8, 'Pastel de vainilla con fresas', 'ruta/a/imagen8.jpg', '2024-01-08', 'visible'),
-(9, 'Galletas de chocolate chip', 'ruta/a/imagen9.jpg', '2024-01-09', 'visible'),
-(10, 'Pan dulce', 'ruta/a/imagen10.jpg', '2024-01-10', 'visible'),
-(11, 'Bebidas calientes', 'ruta/a/imagen11.jpg', '2024-01-11', 'visible'),
-(12, 'Panes integrales', 'ruta/a/imagen12.jpg', '2024-01-12', 'visible'),
-(13, 'Cupcakes de diferentes sabores', 'ruta/a/imagen13.jpg', '2024-01-13', 'visible'),
-(14, 'Postres de temporada', 'ruta/a/imagen14.jpg', '2024-01-14', 'visible'),
-(15, 'Catering de eventos', 'ruta/a/imagen15.jpg', '2024-01-15', 'visible'),
-(16, 'Dulces típicos', 'ruta/a/imagen16.jpg', '2024-01-16', 'visible'),
-(17, 'Eventos en la panadería', 'ruta/a/imagen17.jpg', '2024-01-17', 'visible'),
-(18, 'Clientes felices con sus compras', 'ruta/a/imagen18.jpg', '2024-01-18', 'visible'),
-(19, 'Decoraciones de la panadería', 'ruta/a/imagen19.jpg', '2024-01-19', 'visible'),
-(20, 'Eventos especiales en la panadería', 'ruta/a/imagen20.jpg', '2024-01-20', 'visible');
 
 -- --------------------------------------------------------
 
@@ -465,6 +484,29 @@ INSERT INTO `pedidos` (`id_pedido`, `id_cliente`, `fecha_pedido`, `estado`, `tot
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `personalizaciones`
+--
+
+CREATE TABLE `personalizaciones` (
+  `id_personalizacion` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_producto` int(11) DEFAULT NULL,
+  `personalizacion` text DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `personalizaciones`
+--
+
+INSERT INTO `personalizaciones` (`id_personalizacion`, `id_usuario`, `id_producto`, `personalizacion`, `fecha`) VALUES
+(1, 28, NULL, 'hola', '2025-03-21 06:04:12'),
+(2, 28, NULL, 'hola2', '2025-03-21 06:08:38'),
+(3, 28, NULL, 'HOLS', '2025-03-21 06:09:22');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `productos`
 --
 
@@ -474,7 +516,6 @@ CREATE TABLE `productos` (
   `descripcion` text DEFAULT NULL,
   `precio` decimal(10,2) NOT NULL,
   `categoria` int(11) DEFAULT NULL,
-  `imagen` varchar(255) DEFAULT NULL,
   `stock` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -482,28 +523,53 @@ CREATE TABLE `productos` (
 -- Dumping data for table `productos`
 --
 
-INSERT INTO `productos` (`id_producto`, `nombre_producto`, `descripcion`, `precio`, `categoria`, `imagen`, `stock`) VALUES
-(1, 'Pan de Mantequilla', 'Delicioso pan con un toque de mantequilla.', 1.50, 1, 'images/pan_mantequilla.jpg', 100),
-(2, 'Baguette', 'Tradicional pan francés, crujiente por fuera y suave por dentro.', 2.00, 1, 'images/baguette.jpg', 50),
-(3, 'Pan Integral', 'Saludable pan integral, perfecto para sándwiches.', 1.75, 2, 'images/pan_integral.jpg', 80),
-(4, 'Pan Dulce', 'Suave pan dulce con un sabor exquisito.', 2.50, 3, 'images/pan_dulce.jpg', 60),
-(5, 'Focaccia', 'Pan italiano con hierbas y aceite de oliva.', 3.00, 1, 'images/focaccia.jpg', 30),
-(6, 'Croissant', 'Crujiente croissant de mantequilla, ideal para el desayuno.', 2.25, 1, 'images/croissant.jpg', 40),
-(7, 'Pan de Ajo', 'Pan con un delicioso sabor a ajo y perejil.', 2.00, 2, 'images/pan_ajo.jpg', 50),
-(8, 'Pastel de Chocolate', 'Pastel suave y húmedo de chocolate.', 4.00, 4, 'images/torta_chocolate.jpg', 20),
-(9, 'Pan de Pasas', 'Dulce pan con pasas y canela.', 2.50, 3, 'images/pan_pasas.jpg', 55),
-(10, 'Pan de Oliva', 'Pan rústico con trozos de aceitunas.', 2.75, 2, 'images/pan_oliva.jpg', 25),
-(11, 'Pan de Centeno', 'Pan denso y nutritivo hecho de harina de centeno.', 1.80, 2, 'images/pan_centeno.jpg', 45),
-(12, 'Bagel', 'Bagel clásico, perfecto para untar.', 1.50, 1, 'images/bagel.jpg', 70),
-(13, 'Pan de Leche', 'Suave y dulce pan de leche.', 1.90, 3, 'images/pan_leche.jpg', 65),
-(14, 'Pita', 'Pan plano de origen mediterráneo.', 1.60, 1, 'images/pita.jpg', 40),
-(15, 'Pan de Maíz', 'Delicioso pan de maíz, ideal para acompañar.', 2.00, 2, 'images/pan_maiz.jpg', 50),
-(16, 'Tarta de Manzana', 'Tarta de manzana con canela, exquisita.', 4.50, 4, 'images/tarta_manzana.jpg', 15),
-(17, 'Pan de Fruta', 'Pan dulce con trozos de fruta.', 2.75, 3, 'images/pan_fruta.jpg', 30),
-(18, 'Pan de Chocolate', 'Pan dulce de chocolate, ideal para los amantes del cacao.', 2.80, 3, 'images/pan_chocolate.jpg', 25),
-(19, 'Pan Sourdough', 'Pan de masa madre, crujiente y con sabor fuerte.', 3.50, 1, 'images/pan_sourdough.jpg', 20),
-(20, 'Galletas', 'Galletas recién horneadas, crujientes y deliciosas.', 1.20, 5, 'images/galletas.jpg', 100),
-(21, 'Brownie', 'Delicioso brownie de chocolate, perfecto para compartir.', 3.00, 4, 'images/brownie.jpg', 35);
+INSERT INTO `productos` (`id_producto`, `nombre_producto`, `descripcion`, `precio`, `categoria`, `stock`) VALUES
+(1, 'Pan Blanco', 'Pan suave y esponjoso, corteza dorada, perfecto para sándwiches', 1.50, 1, 100),
+(2, 'Baguette', 'Tradicional pan francés, crujiente por fuera y suave por dentro.', 2.00, 1, 50),
+(3, 'Pan Integral', 'Saludable pan integral, perfecto para sándwiches.', 1.75, 2, 80),
+(4, 'Pan Dulce', 'Suave pan dulce con un sabor exquisito.', 2.50, 3, 60),
+(5, 'Focaccia', 'Pan italiano con hierbas y aceite de oliva.', 3.00, 1, 30),
+(6, 'Croissant', 'Crujiente croissant de mantequilla, ideal para el desayuno.', 2.25, 1, 40),
+(7, 'Pan de Ajo', 'Pan con un delicioso sabor a ajo y perejil.', 2.00, 2, 50),
+(8, 'Pastel de Chocolate', 'Pastel suave y húmedo de chocolate.', 4.00, 4, 20),
+(9, 'Pan de Pasas', 'Dulce pan con pasas y canela.', 2.50, 3, 55),
+(10, 'Pan de Oliva', 'Pan rústico con trozos de aceitunas.', 2.75, 2, 25),
+(11, 'Pan de Centeno', 'Pan denso y nutritivo hecho de harina de centeno.', 1.80, 2, 45),
+(12, 'Bagel', 'Bagel clásico, perfecto para untar.', 1.50, 1, 70),
+(13, 'Pan de Leche', 'Suave y dulce pan de leche.', 1.90, 3, 65),
+(14, 'Pita', 'Pan plano de origen mediterráneo.', 1.60, 1, 40),
+(15, 'Pan de Maíz', 'Delicioso pan de maíz, ideal para acompañar.', 2.00, 2, 50),
+(16, 'Tarta de Manzana', 'Tarta de manzana con canela, exquisita.', 4.50, 4, 15),
+(17, 'Pan de Fruta', 'Pan dulce con trozos de fruta.', 2.75, 3, 30),
+(18, 'Pan de Chocolate', 'Pan dulce de chocolate, ideal para los amantes del cacao.', 2.80, 3, 25),
+(19, 'Pan Sourdough', 'Pan de masa madre, crujiente y con sabor fuerte.', 3.50, 1, 20),
+(20, 'Galletas', 'Galletas recién horneadas, crujientes y deliciosas.', 1.20, 5, 100),
+(21, 'Brownie', 'Delicioso brownie de chocolate, perfecto para compartir.', 3.00, 4, 35);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `programa_actual`
+--
+
+CREATE TABLE `programa_actual` (
+  `id_usuario` int(11) DEFAULT NULL,
+  `id_programa` int(11) DEFAULT NULL,
+  `fecha_asignacion` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `programa_actual`
+--
+
+INSERT INTO `programa_actual` (`id_usuario`, `id_programa`, `fecha_asignacion`) VALUES
+(28, 8, NULL),
+(28, 8, NULL),
+(28, 5, NULL),
+(28, 7, NULL),
+(28, 1, NULL),
+(28, 13, NULL),
+(28, 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -552,6 +618,25 @@ INSERT INTO `programa_lealtad` (`id_programa`, `nombre_programa`, `descripcion`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `puntos_acumulados`
+--
+
+CREATE TABLE `puntos_acumulados` (
+  `id_usuario` int(11) DEFAULT NULL,
+  `puntos` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `puntos_acumulados`
+--
+
+INSERT INTO `puntos_acumulados` (`id_usuario`, `puntos`) VALUES
+(29, 50),
+(28, 175);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `reservas`
 --
 
@@ -588,6 +673,23 @@ INSERT INTO `reservas` (`id_reserva`, `id_cliente`, `fecha_reserva`, `cantidad_p
 (18, 18, '2024-12-28 15:30:00', 2, 'Mesa con vista a la panadería.'),
 (19, 19, '2024-12-30 18:00:00', 6, 'Reunión familiar.'),
 (20, 20, '2024-12-31 20:00:00', 5, 'Mesa para la fiesta de Año Nuevo.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `session_tokens`
+--
+
+CREATE TABLE `session_tokens` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_expiracion` datetime NOT NULL,
+  `activo` tinyint(1) DEFAULT 1,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -642,6 +744,7 @@ INSERT INTO `soporte` (`id_soporte`, `id_cliente`, `tipo_solicitud`, `mensaje`, 
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
+  `foto_perfil` mediumblob NOT NULL,
   `correo_electronico` varchar(100) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
@@ -652,33 +755,39 @@ CREATE TABLE `usuarios` (
 -- Dumping data for table `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `nombre`, `correo_electronico`, `contrasena`, `telefono`, `direccion`) VALUES
-(1, 'Juan Pérez', 'juan.perez@example.com', 'hashed_password1', '1234567890', 'Calle Falsa 123, Ciudad A'),
-(2, 'María García', 'maria.garcia@example.com', 'hashed_password2', '0987654321', 'Av. Principal 45, Ciudad B'),
-(3, 'Carlos López', 'carlos.lopez@example.com', 'hashed_password3', '1122334455', 'Calle Secundaria 56, Ciudad C'),
-(4, 'Ana Ruiz', 'ana.ruiz@example.com', 'hashed_password4', '5566778899', 'Callejón 7, Ciudad D'),
-(5, 'Luis Torres', 'luis.torres@example.com', 'hashed_password5', '6677889900', 'Av. Central 32, Ciudad E'),
-(6, 'Sofía Martínez', 'sofia.martinez@example.com', 'hashed_password6', '7788990011', 'Calle Las Rosas 123, Ciudad F'),
-(7, 'Diego Fernández', 'diego.fernandez@example.com', 'hashed_password7', '9988776655', 'Paseo Los Olivos 23, Ciudad G'),
-(8, 'Elena Sánchez', 'elena.sanchez@example.com', 'hashed_password8', '8899001122', 'Bulevar Verde 45, Ciudad H'),
-(9, 'José Gómez', 'jose.gomez@example.com', 'hashed_password9', '2233445566', 'Calle del Río 21, Ciudad I'),
-(10, 'Laura Castro', 'laura.castro@example.com', 'hashed_password10', '3344556677', 'Camino de Flores 87, Ciudad J'),
-(11, 'Ricardo Hernández', 'ricardo.hernandez@example.com', 'hashed_password11', '4455667788', 'Av. del Sol 10, Ciudad K'),
-(12, 'Marta Jiménez', 'marta.jimenez@example.com', 'hashed_password12', '5566778899', 'Calle Luna 12, Ciudad L'),
-(13, 'Pablo Díaz', 'pablo.diaz@example.com', 'hashed_password13', '6677889900', 'Camino Real 14, Ciudad M'),
-(14, 'Clara Ríos', 'clara.rios@example.com', 'hashed_password14', '7788990011', 'Calle Primavera 9, Ciudad N'),
-(15, 'David Morales', 'david.morales@example.com', 'hashed_password15', '8899001122', 'Calle Jardín 3, Ciudad O'),
-(16, 'Lucía Paredes', 'lucia.paredes@example.com', 'hashed_password16', '2233445566', 'Av. del Bosque 11, Ciudad P'),
-(17, 'Andrés Herrera', 'andres.herrera@example.com', 'hashed_password17', '3344556677', 'Paseo Los Pinos 67, Ciudad Q'),
-(18, 'Carolina Mendoza', 'carolina.mendoza@example.com', 'hashed_password18', '4455667788', 'Calle Azul 42, Ciudad R'),
-(19, 'Fernando Vargas', 'fernando.vargas@example.com', 'hashed_password19', '5566778899', 'Av. Libertad 8, Ciudad S'),
-(20, 'Isabel Ortiz', 'isabel.ortiz@example.com', 'hashed_password20', '6677889900', 'Calle Esperanza 13, Ciudad T'),
-(21, 'Admin', 'riveraerick966@gmail.com', 'I was born in the USA', '6631263093', 'mi casa'),
-(23, 'Erick', 'test@gmail.com', '$2y$10$rMBAq144CmXnS0/n7k9oN.gvWh3YmhUoGtt0H5p2m.ach1/Nf1UlC', '', '');
+INSERT INTO `usuarios` (`id_usuario`, `nombre`, `foto_perfil`, `correo_electronico`, `contrasena`, `telefono`, `direccion`) VALUES
+(1, 'Juan Pérez', '', 'juan.perez@example.com', 'hashed_password1', '1234567890', 'Calle Falsa 123, Ciudad A'),
+(2, 'María García', '', 'maria.garcia@example.com', 'hashed_password2', '0987654321', 'Av. Principal 45, Ciudad B'),
+(3, 'Carlos López', '', 'carlos.lopez@example.com', 'hashed_password3', '1122334455', 'Calle Secundaria 56, Ciudad C'),
+(4, 'Ana Ruiz', '', 'ana.ruiz@example.com', 'hashed_password4', '5566778899', 'Callejón 7, Ciudad D'),
+(5, 'Luis Torres', '', 'luis.torres@example.com', 'hashed_password5', '6677889900', 'Av. Central 32, Ciudad E'),
+(6, 'Sofía Martínez', '', 'sofia.martinez@example.com', 'hashed_password6', '7788990011', 'Calle Las Rosas 123, Ciudad F'),
+(7, 'Diego Fernández', '', 'diego.fernandez@example.com', 'hashed_password7', '9988776655', 'Paseo Los Olivos 23, Ciudad G'),
+(8, 'Elena Sánchez', '', 'elena.sanchez@example.com', 'hashed_password8', '8899001122', 'Bulevar Verde 45, Ciudad H'),
+(9, 'José Gómez', '', 'jose.gomez@example.com', 'hashed_password9', '2233445566', 'Calle del Río 21, Ciudad I'),
+(10, 'Laura Castro', '', 'laura.castro@example.com', 'hashed_password10', '3344556677', 'Camino de Flores 87, Ciudad J'),
+(11, 'Ricardo Hernández', '', 'ricardo.hernandez@example.com', 'hashed_password11', '4455667788', 'Av. del Sol 10, Ciudad K'),
+(12, 'Marta Jiménez', '', 'marta.jimenez@example.com', 'hashed_password12', '5566778899', 'Calle Luna 12, Ciudad L'),
+(13, 'Pablo Díaz', '', 'pablo.diaz@example.com', 'hashed_password13', '6677889900', 'Camino Real 14, Ciudad M'),
+(14, 'Clara Ríos', '', 'clara.rios@example.com', 'hashed_password14', '7788990011', 'Calle Primavera 9, Ciudad N'),
+(15, 'David Morales', '', 'david.morales@example.com', 'hashed_password15', '8899001122', 'Calle Jardín 3, Ciudad O'),
+(16, 'Lucía Paredes', '', 'lucia.paredes@example.com', 'hashed_password16', '2233445566', 'Av. del Bosque 11, Ciudad P'),
+(17, 'Andrés Herrera', '', 'andres.herrera@example.com', 'hashed_password17', '3344556677', 'Paseo Los Pinos 67, Ciudad Q'),
+(18, 'Carolina Mendoza', '', 'carolina.mendoza@example.com', 'hashed_password18', '4455667788', 'Calle Azul 42, Ciudad R'),
+(19, 'Fernando Vargas', '', 'fernando.vargas@example.com', 'hashed_password19', '5566778899', 'Av. Libertad 8, Ciudad S'),
+(20, 'Isabel Ortiz', '', 'isabel.ortiz@example.com', 'hashed_password20', '6677889900', 'Calle Esperanza 13, Ciudad T'),
+(28, 'Erick', 0x494d475f303038322e4a5047, 'correo@gmail.com', '$2y$10$UDNAvVKsweop5OpOPqpvXuR0iz2lVyr8R8HB4GdCm680W.ePPchN.', '', ''),
+(29, 'Pongame 10, Profe', 0x32303735783331333078322e6a7067, 'prueba@gmail.com', '$2y$10$6AFkWTa2GH6o0QSsQpkX2.KJOQYSEgrBLqIX5lxoaO9o3TMXT6SAC', '', '');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `blog`
+--
+ALTER TABLE `blog`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `boletines`
@@ -725,6 +834,12 @@ ALTER TABLE `detalle_pedidos`
   ADD KEY `id_producto` (`id_producto`);
 
 --
+-- Indexes for table `empleados`
+--
+ALTER TABLE `empleados`
+  ADD PRIMARY KEY (`id_empleado`);
+
+--
 -- Indexes for table `eventos`
 --
 ALTER TABLE `eventos`
@@ -746,12 +861,6 @@ ALTER TABLE `fotos`
   ADD KEY `id_producto` (`id_producto`);
 
 --
--- Indexes for table `imagenes_galeria`
---
-ALTER TABLE `imagenes_galeria`
-  ADD PRIMARY KEY (`id_imagen`);
-
---
 -- Indexes for table `metodos_pago`
 --
 ALTER TABLE `metodos_pago`
@@ -765,11 +874,25 @@ ALTER TABLE `pedidos`
   ADD KEY `id_cliente` (`id_cliente`);
 
 --
+-- Indexes for table `personalizaciones`
+--
+ALTER TABLE `personalizaciones`
+  ADD PRIMARY KEY (`id_personalizacion`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indexes for table `productos`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`id_producto`),
   ADD KEY `categoria` (`categoria`);
+
+--
+-- Indexes for table `programa_actual`
+--
+ALTER TABLE `programa_actual`
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_programa` (`id_programa`);
 
 --
 -- Indexes for table `programa_lealtad`
@@ -778,11 +901,26 @@ ALTER TABLE `programa_lealtad`
   ADD PRIMARY KEY (`id_programa`);
 
 --
+-- Indexes for table `puntos_acumulados`
+--
+ALTER TABLE `puntos_acumulados`
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indexes for table `reservas`
 --
 ALTER TABLE `reservas`
   ADD PRIMARY KEY (`id_reserva`),
   ADD KEY `id_cliente` (`id_cliente`);
+
+--
+-- Indexes for table `session_tokens`
+--
+ALTER TABLE `session_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_token` (`token`),
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `idx_token` (`token`,`activo`);
 
 --
 -- Indexes for table `soporte`
@@ -803,6 +941,12 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT for table `blog`
+--
+ALTER TABLE `blog`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `boletines`
 --
 ALTER TABLE `boletines`
@@ -812,7 +956,7 @@ ALTER TABLE `boletines`
 -- AUTO_INCREMENT for table `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `categorias`
@@ -839,6 +983,12 @@ ALTER TABLE `detalle_pedidos`
   MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
+-- AUTO_INCREMENT for table `empleados`
+--
+ALTER TABLE `empleados`
+  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
 -- AUTO_INCREMENT for table `eventos`
 --
 ALTER TABLE `eventos`
@@ -848,19 +998,13 @@ ALTER TABLE `eventos`
 -- AUTO_INCREMENT for table `facturas`
 --
 ALTER TABLE `facturas`
-  MODIFY `id_factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `fotos`
 --
 ALTER TABLE `fotos`
   MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- AUTO_INCREMENT for table `imagenes_galeria`
---
-ALTER TABLE `imagenes_galeria`
-  MODIFY `id_imagen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `metodos_pago`
@@ -873,6 +1017,12 @@ ALTER TABLE `metodos_pago`
 --
 ALTER TABLE `pedidos`
   MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `personalizaciones`
+--
+ALTER TABLE `personalizaciones`
+  MODIFY `id_personalizacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `productos`
@@ -893,6 +1043,12 @@ ALTER TABLE `reservas`
   MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
+-- AUTO_INCREMENT for table `session_tokens`
+--
+ALTER TABLE `session_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `soporte`
 --
 ALTER TABLE `soporte`
@@ -902,7 +1058,7 @@ ALTER TABLE `soporte`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Constraints for dumped tables
@@ -955,16 +1111,41 @@ ALTER TABLE `pedidos`
   ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `usuarios` (`id_usuario`) ON DELETE SET NULL;
 
 --
+-- Constraints for table `personalizaciones`
+--
+ALTER TABLE `personalizaciones`
+  ADD CONSTRAINT `personalizaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
+
+--
 -- Constraints for table `productos`
 --
 ALTER TABLE `productos`
   ADD CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`categoria`) REFERENCES `categorias` (`id_categoria`) ON DELETE SET NULL;
 
 --
+-- Constraints for table `programa_actual`
+--
+ALTER TABLE `programa_actual`
+  ADD CONSTRAINT `programa_actual_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
+  ADD CONSTRAINT `programa_actual_ibfk_2` FOREIGN KEY (`id_programa`) REFERENCES `programa_lealtad` (`id_programa`);
+
+--
+-- Constraints for table `puntos_acumulados`
+--
+ALTER TABLE `puntos_acumulados`
+  ADD CONSTRAINT `puntos_acumulados_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
+
+--
 -- Constraints for table `reservas`
 --
 ALTER TABLE `reservas`
   ADD CONSTRAINT `reservas_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `usuarios` (`id_usuario`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `session_tokens`
+--
+ALTER TABLE `session_tokens`
+  ADD CONSTRAINT `session_tokens_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`);
 
 --
 -- Constraints for table `soporte`
