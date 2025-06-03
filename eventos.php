@@ -54,6 +54,7 @@ try {
                                     Capacidad: <?php echo htmlspecialchars($evento['capacidad']); ?> personas
                                 </div>
                             </div>
+                            <?php?>
                         </div>
                     </div>
                 </div>
