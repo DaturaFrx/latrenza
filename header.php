@@ -45,7 +45,7 @@ if (isset($_SESSION['usuario']['id'])) {
             <a href="<?php echo SITE_URL; ?>" class="text-2xl font-bold"><?php echo SITE_NAME; ?></a>
             <div class="hidden md:flex space-x-6">
                 <a href="<?php echo SITE_URL; ?>/productos/categorias.php">Productos</a>
-                <a href="<?php echo SITE_URL; ?>/reservas.php">Reservas</a>
+                <a href="<?php echo SITE_URL; ?>/reservas/reservas.php">Reservas</a>
                 <a href="<?php echo SITE_URL; ?>/eventos/eventos.php">Eventos</a>
                 <a href="<?php echo SITE_URL; ?>/blog/blog.php">Noticias y Opiniones</a>
                 <a href="<?php echo SITE_URL; ?>/contacto.php">Contacto</a>
