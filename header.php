@@ -48,7 +48,7 @@ if (isset($_SESSION['usuario']['id'])) {
                 <a href="<?php echo SITE_URL; ?>/reservas/reservas.php">Reservas</a>
                 <a href="<?php echo SITE_URL; ?>/eventos/eventos.php">Eventos</a>
                 <a href="<?php echo SITE_URL; ?>/blog/blog.php">Noticias y Opiniones</a>
-                <a href="<?php echo SITE_URL; ?>/contacto.php">Contacto</a>
+                <a href="<?php echo SITE_URL; ?>/contacto/contacto.php">Contacto</a>
             </div>
             <div class="flex items-center space-x-4">
                 <?php if (isLoggedIn()): ?>

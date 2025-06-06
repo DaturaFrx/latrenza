@@ -67,7 +67,7 @@ try {
 
         echo "<script>
             alert('Reserva actualizada con éxito.');
-            window.location.href = 'perfil.php';
+            window.location.href = '../usuario/perfil.php';
         </script>";
         exit();
     }

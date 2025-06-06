@@ -44,7 +44,7 @@ function getProductoById($id_producto)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Procesar petición AJAX para “Agregar al Carrito”
+// Procesar petición AJAX para "Agregar al Carrito"
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_producto'], $_POST['id_usuario'], $_POST['cantidad'])) {
     // Si no hay usuario en sesión, devolvemos error inmediato
     if (!$usuarioId) {
@@ -114,134 +114,532 @@ include __DIR__ . '/../header.php';
 ?>
 
 <style>
-    .toast {
-        position: fixed;
-        bottom: 20px;
+    :root {
+        --primary-color: #E4007C;
+        --secondary-color: #FF69B4;
+        --background-color: #FFF0F5;
+        --text-color: #333;
+        --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+        min-height: 100vh;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
+
+    .product-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(228, 0, 124, 0.3);
+        transition: var(--transition);
+        margin-bottom: 1.5rem;
+    }
+
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(228, 0, 124, 0.4);
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 500px;
+        transition: var(--transition);
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .image-section {
+        position: relative;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .main-image:hover {
+        transform: scale(1.05);
+    }
+
+    .image-dots {
+        position: absolute;
+        bottom: 1rem;
         left: 50%;
         transform: translateX(-50%);
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
+        display: flex;
+        gap: 0.5rem;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 0.5rem;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        outline: none;
+    }
+
+    .dot.active,
+    .dot:hover {
+        background: white;
+        transform: scale(1.3);
+    }
+
+    .info-section {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .product-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .product-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .product-price {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 2rem;
+    }
+
+    .quantity-section {
+        margin-bottom: 2rem;
+    }
+
+    .quantity-label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        border-radius: 50px;
+        padding: 0.25rem;
+        width: fit-content;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quantity-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quantity-btn:hover {
+        background: var(--primary-color);
         color: white;
-        background-color: #333;
-        opacity: 0.9;
-        z-index: 9999;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        transform: scale(1.1);
+    }
+
+    .quantity-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .quantity-input {
+        border: none;
+        background: transparent;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        width: 60px;
+        outline: none;
+    }
+
+    .add-to-cart-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 6px 20px rgba(228, 0, 124, 0.3);
+        width: 100%;
+    }
+
+    .add-to-cart-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(228, 0, 124, 0.4);
+    }
+
+    .login-section {
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #fff3f3, #ffe8e8);
+        border-radius: 15px;
+        border: 2px dashed var(--primary-color);
+    }
+
+    .login-message {
+        color: #dc2626;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .login-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(228, 0, 124, 0.3);
+    }
+
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(228, 0, 124, 0.4);
+    }
+
+    .not-found {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+        font-size: 1.2rem;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        font-weight: 600;
+        color: white;
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: var(--transition);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast.show {
+        transform: translateX(0);
     }
 
     .toast.success {
-        background-color: #28a745;
+        background: linear-gradient(135deg, #10b981, #34d399);
     }
 
     .toast.error {
-        background-color: #dc3545;
+        background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .product-card {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .info-section {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.5rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+        }
+
+        .toast {
+            bottom: 1rem;
+            right: 1rem;
+            left: 1rem;
+            transform: translateY(100px);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
     }
 </style>
 
-<section class="py-16 bg-gray-50">
-    <div class="container mx-auto px-4">
-        <h2 class="section-header text-3xl font-bold text-center mb-12 reveal text-black">
-            Detalles del Producto
-        </h2>
+<div class="product-container">
+    <a href="javascript:history.back()" class="back-button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 12H5m0 0l7 7m-7-7l7-7" />
+        </svg>
+        Volver
+    </a>
 
-        <a href="javascript:history.back()"
-            class="inline-block mb-6 py-2 px-4 bg-pink-600 text-white font-bold rounded-full hover:bg-pink-700 transition-colors duration-300">
-            Volver
-        </a>
-
-        <?php if ($producto && !empty($producto)): ?>
-            <?php
-            $prod = $producto[0];
-            $fotos_urls = [];
-            foreach ($producto as $prodItem) {
-                if (!empty($prodItem['url_foto'])) {
-                    $fotos_urls[] = $prodItem['url_foto'];
-                }
+    <?php if ($producto && !empty($producto)): ?>
+        <?php
+        $prod = $producto[0];
+        $fotos_urls = [];
+        foreach ($producto as $prodItem) {
+            if (!empty($prodItem['url_foto'])) {
+                $fotos_urls[] = $prodItem['url_foto'];
             }
-            $primary_image = !empty($fotos_urls[0]) ? $fotos_urls[0] : $default_image;
-            ?>
+        }
+        $primary_image = !empty($fotos_urls[0]) ? $fotos_urls[0] : $default_image;
+        ?>
 
-            <div class="product-card bg-white rounded-lg shadow-md overflow-hidden text-center hover:shadow-lg transition-shadow duration-300">
-                <div class="h-48 overflow-hidden relative group">
-                    <a href="<?php echo htmlspecialchars($primary_image); ?>" target="_blank" class="block h-full">
-                        <img src="<?php echo htmlspecialchars($primary_image); ?>"
-                            alt="<?php echo htmlspecialchars($prod['nombre_producto']); ?>"
-                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            loading="lazy" onerror="this.src='<?php echo $default_image; ?>'">
-                    </a>
+        <div class="product-card">
+            <!-- Image Section -->
+            <div class="image-section">
+                <img src="<?php echo htmlspecialchars($primary_image); ?>"
+                    alt="<?php echo htmlspecialchars($prod['nombre_producto']); ?>"
+                    class="main-image"
+                    id="main-product-image"
+                    onclick="openImageModal(this.src)"
+                    onerror="this.src='<?php echo $default_image; ?>'">
 
-                    <?php if (count($fotos_urls) > 1): ?>
-                        <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-2 z-10">
-                            <?php foreach ($fotos_urls as $index => $foto): ?>
-                                <?php if (!empty($foto)): ?>
-                                    <button class="w-2 h-2 rounded-full bg-white opacity-70 hover:opacity-100 transition-opacity duration-200
-                                               <?php echo $index === 0 ? 'opacity-100' : ''; ?>"
-                                        data-image="<?php echo htmlspecialchars($foto); ?>"
-                                        data-default="<?php echo htmlspecialchars($default_image); ?>"
-                                        onclick="changeProductImage(this)"
-                                        aria-label="Ver imagen <?php echo $index + 1; ?>"></button>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
+                <?php if (count($fotos_urls) > 1): ?>
+                    <div class="image-dots">
+                        <?php foreach ($fotos_urls as $index => $foto): ?>
+                            <?php if (!empty($foto)): ?>
+                                <button class="dot <?php echo $index === 0 ? 'active' : ''; ?>"
+                                    data-image="<?php echo htmlspecialchars($foto); ?>"
+                                    onclick="changeProductImage(this, <?php echo $index; ?>)"></button>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
 
-                <div class="p-6">
-                    <h3 class="text-xl font-bold mb-2 text-black">
+            <!-- Info Section -->
+            <div class="info-section">
+                <div>
+                    <h1 class="product-title">
                         <?php echo htmlspecialchars($prod['nombre_producto']); ?>
-                    </h3>
+                    </h1>
 
                     <?php if (!empty($prod['descripcion'])): ?>
-                        <p class="text-gray-600 mb-4 line-clamp-2">
-                            <?php echo htmlspecialchars($prod['descripcion']); ?>
+                        <p class="product-description">
+                            <?php echo nl2br(htmlspecialchars($prod['descripcion'])); ?>
                         </p>
                     <?php endif; ?>
 
-                    <p class="text-lg font-bold text-pink-600 mb-4">
+                    <div class="product-price">
                         $<?php echo number_format($prod['precio'], 2); ?>
-                    </p>
+                    </div>
+                </div>
 
-                    <!-- Si no hay usuario en sesión, mostramos mensaje en lugar del formulario -->
+                <div>
                     <?php if ($usuarioId): ?>
-                        <form id="add-to-cart-form" action="producto.php" method="POST">
+                        <form id="add-to-cart-form" onsubmit="addToCart(event)">
                             <input type="hidden" name="id_producto" value="<?php echo $prod['id_producto']; ?>">
                             <input type="hidden" name="id_usuario" value="<?php echo $usuarioId; ?>">
 
-                            <label for="cantidad" class="text-gray-600 font-semibold">Cantidad:</label>
-                            <input type="number" id="cantidad" name="cantidad" min="1" value="1"
-                                class="border rounded py-2 px-3 mb-4 w-full" required>
+                            <div class="quantity-section">
+                                <label class="quantity-label">Cantidad:</label>
+                                <div class="quantity-controls">
+                                    <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">−</button>
+                                    <input type="number"
+                                        id="cantidad"
+                                        name="cantidad"
+                                        value="1"
+                                        min="1"
+                                        max="99"
+                                        class="quantity-input"
+                                        readonly>
+                                    <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                                </div>
+                            </div>
 
-                            <button type="submit"
-                                class="bg-pink-600 text-white py-2 px-4 rounded-full hover:bg-pink-700 transition-colors duration-300">
+                            <button type="submit" class="add-to-cart-btn">
                                 Agregar al Carrito
                             </button>
                         </form>
                     <?php else: ?>
-                        <div class="mb-4 text-center">
-                            <p class="text-red-600 font-medium mb-2">Debes iniciar sesión para poder comprar este producto.</p>
-                            <a href="<?php echo SITE_URL; ?>../admin/login.php"
-                                class="inline-block bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition-colors duration-300">
+                        <div class="login-section">
+                            <p class="login-message">🔒 Inicia sesión para comprar este producto</p>
+                            <a href="<?php echo SITE_URL; ?>../admin/login.php" class="login-btn">
                                 Iniciar Sesión
                             </a>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
-        <?php else: ?>
-            <div class="col-span-3 text-center text-gray-600 py-8">
-                <p>No se encontró el producto.</p>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
+        </div>
+    <?php else: ?>
+        <div class="not-found">
+            <h2>Producto no encontrado</h2>
+            <p>El producto que buscas no existe o ha sido eliminado.</p>
+        </div>
+    <?php endif; ?>
+</div>
 
 <script>
-    // Solo se adjunta el listener de AJAX si el usuario está registrado
+    // Quantity control functions
+    function changeQuantity(delta) {
+        const input = document.getElementById('cantidad');
+        const currentValue = parseInt(input.value) || 1;
+        const newValue = Math.max(1, Math.min(99, currentValue + delta));
+        input.value = newValue;
+
+        // Update button states
+        const minusBtn = document.querySelector('.quantity-btn:first-child');
+        const plusBtn = document.querySelector('.quantity-btn:last-child');
+
+        minusBtn.disabled = newValue <= 1;
+        plusBtn.disabled = newValue >= 99;
+    }
+
+    // Image gallery functions
+    function changeProductImage(button, index) {
+        const newImageUrl = button.getAttribute('data-image');
+        const mainImage = document.getElementById('main-product-image');
+        const allDots = document.querySelectorAll('.dot');
+
+        mainImage.src = newImageUrl;
+
+        allDots.forEach(dot => dot.classList.remove('active'));
+        button.classList.add('active');
+    }
+
+    // Modal for full-size image viewing
+    function openImageModal(src) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            cursor: pointer;
+        `;
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = `
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+        `;
+
+        modal.appendChild(img);
+        document.body.appendChild(modal);
+
+        modal.addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+    }
+
+    // Toast notification system
+    function showToast(message, type) {
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Auto remove
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Add to cart function
     <?php if ($usuarioId): ?>
-        document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
+
+        function addToCart(event) {
             event.preventDefault();
 
-            const formData = new FormData(this);
+            const form = event.target;
+            const formData = new FormData(form);
+            const button = form.querySelector('.add-to-cart-btn');
+
+            // Disable button and show loading state
+            button.disabled = true;
+            button.textContent = 'Agregando...';
 
             fetch('producto.php', {
                     method: 'POST',
@@ -250,42 +648,26 @@ include __DIR__ . '/../header.php';
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Producto agregado al carrito!', 'success');
+                        showToast('¡Producto agregado al carrito!', 'success');
                     } else {
-                        showToast('Error al agregar al carrito: ' + data.message, 'error');
+                        showToast(data.message || 'Error al agregar al carrito', 'error');
                     }
                 })
                 .catch(() => {
-                    showToast('Error de conexión.', 'error');
+                    showToast('Error de conexión. Inténtalo de nuevo.', 'error');
+                })
+                .finally(() => {
+                    // Reset button
+                    button.disabled = false;
+                    button.textContent = 'Agregar al Carrito';
                 });
-        });
-
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
         }
     <?php endif; ?>
 
-    function changeProductImage(button) {
-        const newImageUrl = button.getAttribute('data-image');
-        const defaultImage = button.getAttribute('data-default');
-        const card = button.closest('.product-card');
-        const mainImage = card.querySelector('img');
-
-        mainImage.src = newImageUrl;
-        mainImage.onerror = function() {
-            this.src = defaultImage;
-        };
-
-        card.querySelectorAll('button').forEach(dot => dot.classList.remove('opacity-100'));
-        button.classList.add('opacity-100');
-    }
+    // Initialize quantity controls
+    document.addEventListener('DOMContentLoaded', function() {
+        changeQuantity(0); // Set initial button states
+    });
 </script>
 
 <?php include __DIR__ . '/../footer.php'; ?>
