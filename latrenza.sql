@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2025 at 05:46 AM
+-- Generation Time: Jun 06, 2025 at 05:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -100,16 +100,16 @@ CREATE TABLE `carrito` (
   `id_usuario` int(11) NOT NULL,
   `id_producto` int(11) NOT NULL,
   `cantidad` int(11) DEFAULT 1,
-  `fecha_agregado` datetime DEFAULT current_timestamp(),
-  `personalizacion` text DEFAULT NULL
+  `fecha_agregado` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `carrito`
 --
 
-INSERT INTO `carrito` (`id_carrito`, `id_usuario`, `id_producto`, `cantidad`, `fecha_agregado`, `personalizacion`) VALUES
-(24, 29, 1, 1, '2024-12-03 10:42:48', NULL);
+INSERT INTO `carrito` (`id_carrito`, `id_usuario`, `id_producto`, `cantidad`, `fecha_agregado`) VALUES
+(24, 29, 1, 1, '2024-12-03 10:42:48'),
+(39, 28, 1, 1, '2025-06-06 07:57:11');
 
 -- --------------------------------------------------------
 
@@ -516,35 +516,36 @@ CREATE TABLE `productos` (
   `descripcion` text DEFAULT NULL,
   `precio` decimal(10,2) NOT NULL,
   `categoria` int(11) DEFAULT NULL,
-  `stock` int(11) DEFAULT 0
+  `stock` int(11) DEFAULT 0,
+  `contador` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `productos`
 --
 
-INSERT INTO `productos` (`id_producto`, `nombre_producto`, `descripcion`, `precio`, `categoria`, `stock`) VALUES
-(1, 'Pan Blanco', 'Pan suave y esponjoso, corteza dorada, perfecto para sándwiches', 1.50, 1, 100),
-(2, 'Baguette', 'Tradicional pan francés, crujiente por fuera y suave por dentro.', 2.00, 1, 50),
-(3, 'Pan Integral', 'Saludable pan integral, perfecto para sándwiches.', 1.75, 2, 80),
-(4, 'Pan Dulce', 'Suave pan dulce con un sabor exquisito.', 2.50, 3, 60),
-(5, 'Focaccia', 'Pan italiano con hierbas y aceite de oliva.', 3.00, 1, 30),
-(6, 'Croissant', 'Crujiente croissant de mantequilla, ideal para el desayuno.', 2.25, 1, 40),
-(7, 'Pan de Ajo', 'Pan con un delicioso sabor a ajo y perejil.', 2.00, 2, 50),
-(8, 'Pastel de Chocolate', 'Pastel suave y húmedo de chocolate.', 4.00, 4, 20),
-(9, 'Pan de Pasas', 'Dulce pan con pasas y canela.', 2.50, 3, 55),
-(10, 'Pan de Oliva', 'Pan rústico con trozos de aceitunas.', 2.75, 2, 25),
-(11, 'Pan de Centeno', 'Pan denso y nutritivo hecho de harina de centeno.', 1.80, 2, 45),
-(12, 'Bagel', 'Bagel clásico, perfecto para untar.', 1.50, 1, 70),
-(13, 'Pan de Leche', 'Suave y dulce pan de leche.', 1.90, 3, 65),
-(14, 'Pita', 'Pan plano de origen mediterráneo.', 1.60, 1, 40),
-(15, 'Pan de Maíz', 'Delicioso pan de maíz, ideal para acompañar.', 2.00, 2, 50),
-(16, 'Tarta de Manzana', 'Tarta de manzana con canela, exquisita.', 4.50, 4, 15),
-(17, 'Pan de Fruta', 'Pan dulce con trozos de fruta.', 2.75, 3, 30),
-(18, 'Pan de Chocolate', 'Pan dulce de chocolate, ideal para los amantes del cacao.', 2.80, 3, 25),
-(19, 'Pan Sourdough', 'Pan de masa madre, crujiente y con sabor fuerte.', 3.50, 1, 20),
-(20, 'Galletas', 'Galletas recién horneadas, crujientes y deliciosas.', 1.20, 5, 100),
-(21, 'Brownie', 'Delicioso brownie de chocolate, perfecto para compartir.', 3.00, 4, 35);
+INSERT INTO `productos` (`id_producto`, `nombre_producto`, `descripcion`, `precio`, `categoria`, `stock`, `contador`) VALUES
+(1, 'Pan Blanco', 'Pan suave y esponjoso, corteza dorada, perfecto para sándwiches', 1.50, 1, 100, 10000000),
+(2, 'Baguette', 'Tradicional pan francés, crujiente por fuera y suave por dentro.', 2.00, 1, 50, 0),
+(3, 'Pan Integral', 'Saludable pan integral, perfecto para sándwiches.', 1.75, 2, 80, 0),
+(4, 'Pan Dulce', 'Suave pan dulce con un sabor exquisito.', 2.50, 3, 60, 0),
+(5, 'Focaccia', 'Pan italiano con hierbas y aceite de oliva.', 3.00, 1, 30, 0),
+(6, 'Croissant', 'Crujiente croissant de mantequilla, ideal para el desayuno.', 2.25, 1, 40, 0),
+(7, 'Pan de Ajo', 'Pan con un delicioso sabor a ajo y perejil.', 2.00, 2, 50, 0),
+(8, 'Pastel de Chocolate', 'Pastel suave y húmedo de chocolate.', 4.00, 4, 20, 0),
+(9, 'Pan de Pasas', 'Dulce pan con pasas y canela.', 2.50, 3, 55, 0),
+(10, 'Pan de Oliva', 'Pan rústico con trozos de aceitunas.', 2.75, 2, 25, 0),
+(11, 'Pan de Centeno', 'Pan denso y nutritivo hecho de harina de centeno.', 1.80, 2, 45, 0),
+(12, 'Bagel', 'Bagel clásico, perfecto para untar.', 1.50, 1, 70, 0),
+(13, 'Pan de Leche', 'Suave y dulce pan de leche.', 1.90, 3, 65, 0),
+(14, 'Pita', 'Pan plano de origen mediterráneo.', 1.60, 1, 40, 0),
+(15, 'Pan de Maíz', 'Delicioso pan de maíz, ideal para acompañar.', 2.00, 2, 50, 0),
+(16, 'Tarta de Manzana', 'Tarta de manzana con canela, exquisita.', 4.50, 4, 15, 0),
+(17, 'Pan de Fruta', 'Pan dulce con trozos de fruta.', 2.75, 3, 30, 0),
+(18, 'Pan de Chocolate', 'Pan dulce de chocolate, ideal para los amantes del cacao.', 2.80, 3, 25, 0),
+(19, 'Pan Sourdough', 'Pan de masa madre, crujiente y con sabor fuerte.', 3.50, 1, 20, 0),
+(20, 'Galletas', 'Galletas recién horneadas, crujientes y deliciosas.', 1.20, 5, 100, 1),
+(21, 'Brownie', 'Delicioso brownie de chocolate, perfecto para compartir.', 3.00, 4, 35, 1000);
 
 -- --------------------------------------------------------
 
@@ -569,7 +570,10 @@ INSERT INTO `programa_actual` (`id_usuario`, `id_programa`, `fecha_asignacion`) 
 (28, 7, NULL),
 (28, 1, NULL),
 (28, 13, NULL),
-(28, 4, NULL);
+(28, 4, NULL),
+(28, 4, NULL),
+(28, 6, NULL),
+(28, 6, NULL);
 
 -- --------------------------------------------------------
 
@@ -632,7 +636,7 @@ CREATE TABLE `puntos_acumulados` (
 
 INSERT INTO `puntos_acumulados` (`id_usuario`, `puntos`) VALUES
 (29, 50),
-(28, 175);
+(28, 250);
 
 -- --------------------------------------------------------
 
@@ -672,7 +676,8 @@ INSERT INTO `reservas` (`id_reserva`, `id_cliente`, `fecha_reserva`, `cantidad_p
 (17, 17, '2024-12-25 19:00:00', 10, 'Cena de Navidad, mesa larga.'),
 (18, 18, '2024-12-28 15:30:00', 2, 'Mesa con vista a la panadería.'),
 (19, 19, '2024-12-30 18:00:00', 6, 'Reunión familiar.'),
-(20, 20, '2024-12-31 20:00:00', 5, 'Mesa para la fiesta de Año Nuevo.');
+(20, 20, '2024-12-31 20:00:00', 5, 'Mesa para la fiesta de Año Nuevo.'),
+(24, 28, '2025-06-25 07:00:00', 3, 'wawe');
 
 -- --------------------------------------------------------
 
@@ -956,7 +961,7 @@ ALTER TABLE `boletines`
 -- AUTO_INCREMENT for table `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `categorias`
@@ -1040,7 +1045,7 @@ ALTER TABLE `programa_lealtad`
 -- AUTO_INCREMENT for table `reservas`
 --
 ALTER TABLE `reservas`
-  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `session_tokens`
