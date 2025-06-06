@@ -1,6 +1,4 @@
 <?php
-// reservas.php
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -8,37 +6,23 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../configuracion.php';
 
 $usuarioId = $_SESSION['usuario']['id'] ?? null;
-$error     = '';
-$success   = '';
+$error = '';
+$success = '';
 
-// Si no está autenticado, mostramos mensaje y bloqueamos la página
+// Si no está autenticado
 if (!$usuarioId) {
     echo '<!DOCTYPE html>
     <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Acceso Restringido - ' . SITE_NAME . '</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Acceso Restringido</h2>
-            <p class="text-gray-700 mb-6">Debe iniciar sesión para acceder a esta sección.</p>
-            <a
-                href="' . SITE_URL . '/login.php"
-                class="inline-block bg-pink-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-pink-700 transition"
-            >
-                Iniciar Sesión
-            </a>
-            <div class="mt-4">
-                <a href="' . SITE_URL . '/home.php" class="text-sm text-gray-600 hover:underline">← Volver al inicio</a>
-            </div>
-        </div>
-    </body>
+    <head><meta charset="UTF-8"><title>Acceso Restringido</title></head>
+    <body><h2>Debe iniciar sesión</h2><a href="' . SITE_URL . '/login.php">Iniciar Sesión</a></body>
     </html>';
     exit;
 }
+
+// Obtener valores por GET (si se viene desde eventos.php)
+$fecha_evento = $_GET['fecha'] ?? '';
+$hora_evento = $_GET['hora'] ?? '';
+$id_evento = $_GET['id_evento'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha       = trim($_POST['fecha_reserva'] ?? '');
@@ -47,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comentarios = trim($_POST['comentarios'] ?? '');
 
     if (empty($fecha) || empty($hora) || !$cantidad) {
-        $error = 'Por favor, complete todos los campos obligatorios y asegúrese de ingresar un número válido de personas.';
+        $error = 'Complete todos los campos obligatorios.';
     } else {
         $fechaHoraReserva = $fecha . ' ' . $hora . ':00';
 
@@ -70,11 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':comentarios'       => $comentarios
             ]);
 
-            $success = 'Su reserva ha sido registrada correctamente.';
+            $success = 'Reserva realizada con éxito.';
             $_SESSION['reserva_realizada'] = true;
         } catch (PDOException $e) {
-            $error = 'Ocurrió un error al registrar la reserva: ' . $e->getMessage();
-            error_log("Error al insertar en tabla reservas: " . $e->getMessage());
+            $error = 'Error al registrar: ' . $e->getMessage();
         }
     }
 }
@@ -85,113 +68,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacer Reserva - <?php echo SITE_NAME; ?></title>
+    <title>Hacer Reserva</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-lg">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Hacer Nueva Reserva</h2>
+    <div class="w-full max-w-lg bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-3xl font-bold text-center mb-6">Hacer Reserva</h2>
 
-        <div class="bg-white p-8 rounded-lg shadow-md">
-            <?php if ($error): ?>
-                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
-            <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="mb-4 bg-red-100 text-red-700 p-3 rounded"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="mb-4 bg-green-100 text-green-700 p-3 rounded"><?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
 
-            <?php if ($success): ?>
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    <?php echo htmlspecialchars($success); ?>
-                </div>
-            <?php endif; ?>
-
-            <form action="reservas.php" method="POST" class="space-y-6">
-                <!-- Fecha de reserva -->
-                <div>
-                    <label for="fecha_reserva" class="block text-sm font-medium text-gray-700">
-                        Fecha de Reserva
-                    </label>
-                    <input
-                        type="date"
-                        id="fecha_reserva"
-                        name="fecha_reserva"
-                        required
-                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="<?php echo isset($_POST['fecha_reserva']) ? htmlspecialchars($_POST['fecha_reserva']) : ''; ?>">
-                </div>
-
-                <!-- Hora de reserva -->
-                <div>
-                    <label for="hora_reserva" class="block text-sm font-medium text-gray-700">
-                        Hora de Reserva
-                    </label>
-                    <input
-                        type="time"
-                        id="hora_reserva"
-                        name="hora_reserva"
-                        required
-                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="<?php echo isset($_POST['hora_reserva']) ? htmlspecialchars($_POST['hora_reserva']) : ''; ?>">
-                </div>
-
-                <!-- Cantidad de personas -->
-                <div>
-                    <label for="cantidad_personas" class="block text-sm font-medium text-gray-700">
-                        Cantidad de Personas
-                    </label>
-                    <input
-                        type="number"
-                        id="cantidad_personas"
-                        name="cantidad_personas"
-                        min="1"
-                        required
-                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="<?php echo isset($_POST['cantidad_personas']) ? htmlspecialchars($_POST['cantidad_personas']) : ''; ?>">
-                </div>
-
-                <!-- Comentarios adicionales -->
-                <div>
-                    <label for="comentarios" class="block text-sm font-medium text-gray-700">
-                        Comentarios (opcional)
-                    </label>
-                    <textarea
-                        id="comentarios"
-                        name="comentarios"
-                        rows="3"
-                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        placeholder="Por ejemplo: Mesa cerca de la ventana, por favor."><?php echo isset($_POST['comentarios']) ? htmlspecialchars($_POST['comentarios']) : ''; ?></textarea>
-                </div>
-
-                <!-- Botón de enviar -->
-                <div>
-                    <button
-                        type="submit"
-                        class="w-full bg-pink-600 text-white font-medium py-2 px-4 rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                        Reservar Ahora
-                    </button>
-                </div>
-            </form>
-
-            <?php
-            $backBtnClasses = 'inline-block text-sm font-medium px-4 py-2 rounded transition mt-4 ';
-            if (!empty($_SESSION['reserva_realizada'])) {
-                $backBtnClasses .= 'bg-green-100 text-green-800 hover:bg-green-200';
-            } else {
-                $backBtnClasses .= 'text-gray-600 hover:underline';
-            }
-            ?>
-            <div class="text-center">
-                <a href="javascript:history.go(-2)" class="<?php echo $backBtnClasses; ?>">
-                    ← Volver atrás
-                </a>
+        <form action="reservas.php" method="POST" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Fecha</label>
+                <input type="date" name="fecha_reserva" required
+                    value="<?php echo htmlspecialchars($_POST['fecha_reserva'] ?? $fecha_evento); ?>"
+                    class="w-full border rounded px-3 py-2">
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Hora</label>
+                <input type="time" name="hora_reserva" required
+                    value="<?php echo htmlspecialchars($_POST['hora_reserva'] ?? $hora_evento); ?>"
+                    class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Cantidad de Personas</label>
+                <input type="number" name="cantidad_personas" min="1" required
+                    value="<?php echo htmlspecialchars($_POST['cantidad_personas'] ?? 1); ?>"
+                    class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Comentarios</label>
+                <textarea name="comentarios" class="w-full border rounded px-3 py-2"><?php echo htmlspecialchars($_POST['comentarios'] ?? ''); ?></textarea>
+            </div>
+            <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700">Reservar Ahora</button>
+        </form>
 
-            <?php
-            // Si solo debe durar una vez:
-            // unset($_SESSION['reserva_realizada']);
-            ?>
+        <div class="text-center mt-4">
+            <a href="../eventos/eventos.php" class="text-sm text-gray-600 hover:underline">← Volver a eventos</a>
         </div>
     </div>
 </body>
